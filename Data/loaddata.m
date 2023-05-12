@@ -1,0 +1,44 @@
+x = load('q_filer_before_excite.mat');
+data = getfield(x,'ans');
+t = data(1,:);
+q1 = data(2,:);
+q2 = data(3,:);
+q3 = data(4,:);
+q4 = data(5,:);
+q5 = data(6,:);
+q6 = data(7,:);
+
+figure(1);
+plot(t,q1,'r');
+hold on;
+plot(t,q2,'b');
+hold on;
+plot(t,q3,'y');
+hold on;
+plot(t,q4,'m');
+hold on;
+plot(t,q5,'k');
+hold on;
+plot(t,q6,'g');
+
+torque = load('t_filer_before_excite.mat');
+tor = getfield(torque,'ans');
+t1 = tor(2,:);
+t2 = tor(3,:);
+t3 = tor(4,:);
+t4 = tor(5,:);
+t5 = tor(6,:);
+t6 = tor(7,:);
+figure(2);
+plot(t,t1,'r');
+hold on;
+plot(t,t2,'b');
+hold on;
+plot(t,t3,'y');
+hold on;
+plot(t,t4,'m');
+hold on;
+plot(t,t5,'k');
+hold on;
+plot(t,t6,'g');
+
