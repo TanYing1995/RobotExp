@@ -5,7 +5,7 @@ function traj = STraj(from,to,velRatio,accRatio)
 
 vel = [5.76  4.53  6.98  7.85  6.98  1.05]*velRatio*0.5;
 acc = [1.7 1.7 1.7 1.7 1.7 1.7]*accRatio;
-jerk = [5 5 5 5 5 5]*0.6;
+jerk = [5 5 5 5 5 5]*0.8;
 
 p1 = STrajPara(from(1),to(1),0,0,vel(1),acc(1),jerk(1));
 p2 = STrajPara(from(2),to(2),0,0,vel(2),acc(2),jerk(2));
