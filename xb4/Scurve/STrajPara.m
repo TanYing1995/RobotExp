@@ -23,121 +23,128 @@ a_min = ((sigma+1)/2)*amin + ((sigma-1)/2)*amax;
 j_max = ((sigma+1)/2)*jmax + ((sigma-1)/2)*jmin;
 j_min = ((sigma+1)/2)*jmin + ((sigma-1)/2)*jmax;
 
-%% 判断是否达到最大速度
-if ((v_max - v_0)*j_max < a_max^2) 
-    Tj1 = sqrt((v_max - v_0) / j_max); % 达不到a_max
-    Ta = 2*Tj1;
-    a_lima = j_max * Tj1;
+%当前关节未运动时
+if q_0 == q_1
+    para = [0, 0, 0, 0, 0, q_0, q_1, v_0, v_1,0, a_max, a_min, 0, 0, j_max, j_min];
 else
-    Tj1 = a_max / j_max; % 能够达到a_max
-    Ta = Tj1 + (v_max - v_0) / a_max;
-    a_lima = a_max;
-end
-if ((v_max - v_1)*j_max < a_max^2)
-    Tj2 = sqrt((v_max - v_1) / j_max); % 达不到a_min
-    Td = 2*Tj2;
-    a_limd =  -j_max * Tj2;
-else
-    Tj2 = a_max / j_max; % 能够达到a_min
-    Td = Tj2 + (v_max - v_1) / a_max;
-    a_limd = -a_max;
-end
-% 根据（3.25）计算匀速段时间
-Tv = (q_1 - q_0)/v_max - (Ta/2)*(1 + v_0/v_max) - (Td/2)*(1 + v_1/v_max);
-
-%% 对Tv进行讨论
-if (Tv > 0)
-    % 达到最大速度v_max，即存在匀速阶段
-    vlim = v_max;
-    T = Ta + Tv + Td;
-    para = [Ta, Tv, Td, Tj1, Tj2, q_0, q_1, v_0, v_1, vlim, a_max, a_min, a_lima, a_limd, j_max, j_min];
-    return;
-else
-    % 达不到最大速度，即匀速阶段Tv=0
-    % 假设最大加速度和最小加速度均能达到
-    Tv = 0;
-    Tj = a_max / j_max;
-    Tj1 = Tj;
-    Tj2 = Tj;
-    delta = (a_max^4/j_max^2) + 2*(v_0^2 + v_1^2) + a_max*(4*(q_1 - q_0) - 2*(a_max/j_max)*(v_0 + v_1));
-    Ta = ((power(a_max, 2)/j_max) - 2.0*v_0 + sqrt(delta)) / (2.0*a_max);
-    Td = ((power(a_max, 2)/j_max) - 2.0*v_1 + sqrt(delta)) / (2.0*a_max);
-    % 对Ta和Td进行讨论
-    if (Ta < 0 || Td < 0)
-        if (Ta < 0)
-            % 没有加速段，只有减速段
-            Ta = 0; Tj1 = 0;
-            Td = 2*(q_1 - q_0) / (v_0 + v_1);
-            Tj2 = (j_max*(q_1 - q_0) - sqrt(j_max*(j_max*power(q_1 - q_0, 2) + power(v_1 + v_0, 2)*(v_1 - v_0)))) / (j_max*(v_1 + v_0));
-            a_lima = 0;
-            a_limd = -j_max*Tj2;
-            vlim = v0;
-            para = [Ta, Tv, Td, Tj1, Tj2, q_0, q_1, v_0, v_1, vlim, a_max, a_min, a_lima, a_limd, j_max, j_min];
-            return;
-        elseif (Td < 0)
-            % 没有减速段，只有加速段
-            Td = 0; Tj2 = 0;
-            Ta = 2*(q_1 - q_0) / (v_0 + v_1);
-            Tj1 = (j_max*(q_1 - q_0) - sqrt(j_max*(j_max*power(q_1 - q_0, 2)) - power(v_1 + v_0, 2)*(v_1 - v_0))) / (j_max*(v_1 + v_0));
-            a_lima = j_max*Tj1;
-            a_limd = 0;
-            vlim = v_0 + a_lima*(Ta - Tj1);
-            para = [Ta, Tv, Td, Tj1, Tj2, q_0, q_1, v_0, v_1, vlim, a_max, a_min, a_lima, a_limd, j_max, j_min];
-            return;
-        end
-    elseif (Ta >= 2*Tj && Td >= 2*Tj)
-        % 加速段和减速段都能达到最大加速度
+    %% 判断是否达到最大速度
+    if ((v_max - v_0)*j_max < a_max^2) 
+        Tj1 = sqrt((v_max - v_0) / j_max); % 达不到a_max
+        Ta = 2*Tj1;
+        a_lima = j_max * Tj1;
+    else
+        Tj1 = a_max / j_max; % 能够达到a_max
+        Ta = Tj1 + (v_max - v_0) / a_max;
         a_lima = a_max;
+    end
+    if ((v_max - v_1)*j_max < a_max^2)
+        Tj2 = sqrt((v_max - v_1) / j_max); % 达不到a_min
+        Td = 2*Tj2;
+        a_limd =  -j_max * Tj2;
+    else
+        Tj2 = a_max / j_max; % 能够达到a_min
+        Td = Tj2 + (v_max - v_1) / a_max;
         a_limd = -a_max;
-        vlim = v0 + a_lima*(Ta - Tj);
+    end
+    % 根据（3.25）计算匀速段时间
+    Tv = (q_1 - q_0)/v_max - (Ta/2)*(1 + v_0/v_max) - (Td/2)*(1 + v_1/v_max);
+
+    %% 对Tv进行讨论
+    if (Tv > 0)
+        % 达到最大速度v_max，即存在匀速阶段
+        vlim = v_max;
+        T = Ta + Tv + Td;
         para = [Ta, Tv, Td, Tj1, Tj2, q_0, q_1, v_0, v_1, vlim, a_max, a_min, a_lima, a_limd, j_max, j_min];
         return;
     else
-        % 加速和减速阶段至少有一段不能达到最大加速度
-        lambda = 0.99; % 系统取0<lambda<1
-        while (Ta < 2*Tj || Td < 2*Tj)
-            % 循环
-            a_max = lambda*a_max;
-            Tv = 0;
-            Tj = a_max / j_max;
-            Tj1 = Tj;
-            Tj2 = Tj;
-            delta = (a_max^4/j_max^2) + 2*(v_0^2 + v_1^2) + a_max*(4*(q_1 - q_0) - 2*(a_max/j_max)*(v_0 + v_1));
-            Ta = ((power(a_max, 2)/j_max) - 2.0*v_0 + sqrt(delta)) / (2.0*a_max);
-            Td = ((power(a_max, 2)/j_max) - 2.0*v_1 + sqrt(delta)) / (2.0*a_max);
-            if (Ta < 0 || Td < 0)
-                if (Ta < 0)
-                    % 没有加速段，只有减速段
-                    Ta = 0; Tj1 = 0;
-                    Td = 2*(q_1 - q_0) / (v_0 + v_1);
-                    Tj2 = (j_max*(q_1 - q_0) - sqrt(j_max*(j_max*power(q_1 - q_0, 2) + power(v_1 + v_0, 2)*(v_1 - v_0)))) / (j_max*(v_1 + v_0));
-                    a_lima = 0;
-                    a_limd = -j_max*Tj2;
-                    vlim = v0;
-                    para = [Ta, Tv, Td, Tj1, Tj2, q_0, q_1, v_0, v_1, vlim, a_max, a_min, a_lima, a_limd, j_max, j_min];
-                    return;
-                elseif (Td < 0)
-                    % 没有减速段，只有加速段
-                    Td = 0; Tj2 = 0;
-                    Ta = 2*(q_1 - q_0) / (v_0 + v_1);
-                    Tj1 = (j_max*(q_1 - q_0) - sqrt(j_max*(j_max*power(q_1 - q_0, 2)) - power(v_1 + v_0, 2)*(v_1 - v_0))) / (j_max*(v_1 + v_0));
-                    a_lima = j_max*Tj1;
-                    a_limd = 0;
-                    vlim = v_0 + a_lima*(Ta - Tj1);
-                    para = [Ta, Tv, Td, Tj1, Tj2, q_0, q_1, v_0, v_1, vlim, a_max, a_min, a_lima, a_limd, j_max, j_min];
-                    return;
-                end
-            elseif (Ta >= 2*Tj && Td >= 2*Tj)
-                % 加速段和减速段都能达到最大加速度
-                a_lima = a_max;
-                a_limd = -a_max;
-                vlim = v0 + a_lima*(Ta - Tj);
+        % 达不到最大速度，即匀速阶段Tv=0
+        % 假设最大加速度和最小加速度均能达到
+        Tv = 0;
+        Tj = a_max / j_max;
+        Tj1 = Tj;
+        Tj2 = Tj;
+        delta = (a_max^4/j_max^2) + 2*(v_0^2 + v_1^2) + a_max*(4*(q_1 - q_0) - 2*(a_max/j_max)*(v_0 + v_1));
+        Ta = ((power(a_max, 2)/j_max) - 2.0*v_0 + sqrt(delta)) / (2.0*a_max);
+        Td = ((power(a_max, 2)/j_max) - 2.0*v_1 + sqrt(delta)) / (2.0*a_max);
+        % 对Ta和Td进行讨论
+        if (Ta < 0 || Td < 0)
+            if (Ta < 0)
+                % 没有加速段，只有减速段
+                Ta = 0; Tj1 = 0;
+                Td = 2*(q_1 - q_0) / (v_0 + v_1);
+                Tj2 = (j_max*(q_1 - q_0) - sqrt(j_max*(j_max*power(q_1 - q_0, 2) + power(v_1 + v_0, 2)*(v_1 - v_0)))) / (j_max*(v_1 + v_0));
+                a_lima = 0;
+                a_limd = -j_max*Tj2;
+                vlim = v0;
+                para = [Ta, Tv, Td, Tj1, Tj2, q_0, q_1, v_0, v_1, vlim, a_max, a_min, a_lima, a_limd, j_max, j_min];
+                return;
+            elseif (Td < 0)
+                % 没有减速段，只有加速段
+                Td = 0; Tj2 = 0;
+                Ta = 2*(q_1 - q_0) / (v_0 + v_1);
+                Tj1 = (j_max*(q_1 - q_0) - sqrt(j_max*(j_max*power(q_1 - q_0, 2)) - power(v_1 + v_0, 2)*(v_1 - v_0))) / (j_max*(v_1 + v_0));
+                a_lima = j_max*Tj1;
+                a_limd = 0;
+                vlim = v_0 + a_lima*(Ta - Tj1);
                 para = [Ta, Tv, Td, Tj1, Tj2, q_0, q_1, v_0, v_1, vlim, a_max, a_min, a_lima, a_limd, j_max, j_min];
                 return;
             end
+        elseif (Ta >= 2*Tj && Td >= 2*Tj)
+            % 加速段和减速段都能达到最大加速度
+            a_lima = a_max;
+            a_limd = -a_max;
+            vlim = v0 + a_lima*(Ta - Tj);
+            para = [Ta, Tv, Td, Tj1, Tj2, q_0, q_1, v_0, v_1, vlim, a_max, a_min, a_lima, a_limd, j_max, j_min];
+            return;
+        else
+            % 加速和减速阶段至少有一段不能达到最大加速度
+            lambda = 0.99; % 系统取0<lambda<1
+            while (Ta < 2*Tj || Td < 2*Tj)
+                % 循环
+                a_max = lambda*a_max;
+                Tv = 0;
+                Tj = a_max / j_max;
+                Tj1 = Tj;
+                Tj2 = Tj;
+                delta = (a_max^4/j_max^2) + 2*(v_0^2 + v_1^2) + a_max*(4*(q_1 - q_0) - 2*(a_max/j_max)*(v_0 + v_1));
+                Ta = ((power(a_max, 2)/j_max) - 2.0*v_0 + sqrt(delta)) / (2.0*a_max);
+                Td = ((power(a_max, 2)/j_max) - 2.0*v_1 + sqrt(delta)) / (2.0*a_max);
+                if (Ta < 0 || Td < 0)
+                    if (Ta < 0)
+                        % 没有加速段，只有减速段
+                        Ta = 0; Tj1 = 0;
+                        Td = 2*(q_1 - q_0) / (v_0 + v_1);
+                        Tj2 = (j_max*(q_1 - q_0) - sqrt(j_max*(j_max*power(q_1 - q_0, 2) + power(v_1 + v_0, 2)*(v_1 - v_0)))) / (j_max*(v_1 + v_0));
+                        a_lima = 0;
+                        a_limd = -j_max*Tj2;
+                        vlim = v0;
+                        para = [Ta, Tv, Td, Tj1, Tj2, q_0, q_1, v_0, v_1, vlim, a_max, a_min, a_lima, a_limd, j_max, j_min];
+                        return;
+                    elseif (Td < 0)
+                        % 没有减速段，只有加速段
+                        Td = 0; Tj2 = 0;
+                        Ta = 2*(q_1 - q_0) / (v_0 + v_1);
+                        Tj1 = (j_max*(q_1 - q_0) - sqrt(j_max*(j_max*power(q_1 - q_0, 2)) - power(v_1 + v_0, 2)*(v_1 - v_0))) / (j_max*(v_1 + v_0));
+                        a_lima = j_max*Tj1;
+                        a_limd = 0;
+                        vlim = v_0 + a_lima*(Ta - Tj1);
+                        para = [Ta, Tv, Td, Tj1, Tj2, q_0, q_1, v_0, v_1, vlim, a_max, a_min, a_lima, a_limd, j_max, j_min];
+                        return;
+                    end
+                elseif (Ta >= 2*Tj && Td >= 2*Tj)
+                    % 加速段和减速段都能达到最大加速度
+                    a_lima = a_max;
+                    a_limd = -a_max;
+                    vlim = v0 + a_lima*(Ta - Tj);
+                    para = [Ta, Tv, Td, Tj1, Tj2, q_0, q_1, v_0, v_1, vlim, a_max, a_min, a_lima, a_limd, j_max, j_min];
+                    return;
+                end
+            end
         end
     end
+
 end
+
 end
 
 

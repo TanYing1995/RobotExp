@@ -18,6 +18,8 @@ elseif (t >= T - Td + Tj2 && t < T - Tj2)
     q = q1 - (vlim + v1)*(Td/2) + vlim*(t - T + Td) + (alimd/6)*(3*power(t - T + Td, 2) - 3*Tj2*(t - T + Td) + Tj2^2);
 elseif (t >= T - Tj2 && t <= T)
     q = q1 - v1*(T - t) - jmax*(power(T - t, 3)/6);
+elseif(T == 0)
+    q = q0;
 end
 end
 

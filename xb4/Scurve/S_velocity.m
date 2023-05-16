@@ -17,6 +17,8 @@ elseif (t >= T - Td + Tj2 && t < T - Tj2)
     qd = vlim + alimd*(t - T + Td - Tj2/2);
 elseif (t >= T - Tj2 && t <= T)
     qd = v1 + jmax*(power(t - T, 2)/2);
+elseif(T == 0)
+    qd = v0;
 end
 end
 

@@ -17,6 +17,8 @@ elseif (t >= T - Td + Tj2 && t < T - Tj2)
     qdd = alimd;
 elseif (t >= T - Tj2 && t <= T)
     qdd = -jmax*(T - t);
+elseif(T == 0)
+    qdd = alima;
 end
 end
 
