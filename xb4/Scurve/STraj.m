@@ -10,7 +10,7 @@ function traj = STraj(from,to,velRatio,accRatio)
 %vel = [5.76  4.53  6.98  7.85  6.98  1.05]*velRatio*0.4;
 vel = [2.88  2.26  3.5  3.9  3.5  1.05]*velRatio*0.4;
 acc = [1.5 1.4 1.6 1.6 1.6 0.7]*accRatio;
-jerk = [5 5 5 5 5 5]*0.3;
+jerk = [5 5 5 5 5 5]*0.35;
 
 p1 = STrajPara(from(1),to(1),0,0,vel(1),acc(1),jerk(1));
 p2 = STrajPara(from(2),to(2),0,0,vel(2),acc(2),jerk(2));
@@ -50,18 +50,18 @@ for t = 0 : 0.001 : T
     q4(i) = S_position(t, p4_new(1), p4_new(2), p4_new(3), p4_new(4), p4_new(5), p4_new(6), p4_new(7), p4_new(8), p4_new(9), p4_new(10),p4_new(11), p4_new(12), p4_new(13), p4_new(14), p4_new(15), p4_new(16));
     q5(i) = S_position(t, p5_new(1), p5_new(2), p5_new(3), p5_new(4), p5_new(5), p5_new(6), p5_new(7), p5_new(8), p5_new(9), p5_new(10),p5_new(11), p5_new(12), p5_new(13), p5_new(14), p5_new(15), p5_new(16));
     q6(i) = S_position(t, p6_new(1), p6_new(2), p6_new(3), p6_new(4), p6_new(5), p6_new(6), p6_new(7), p6_new(8), p6_new(9), p6_new(10),p6_new(11), p6_new(12), p6_new(13), p6_new(14), p6_new(15), p6_new(16));
-    qd1(i) = S_position(t, p1_new(1), p1_new(2), p1_new(3), p1_new(4), p1_new(5), p1_new(6), p1_new(7), p1_new(8), p1_new(9), p1_new(10),p1_new(11), p1_new(12), p1_new(13), p1_new(14), p1_new(15), p1_new(16));
-    qd2(i) = S_position(t, p2_new(1), p2_new(2), p2_new(3), p2_new(4), p2_new(5), p2_new(6), p2_new(7), p2_new(8), p2_new(9), p2_new(10),p2_new(11), p2_new(12), p2_new(13), p2_new(14), p2_new(15), p2_new(16));
-    qd3(i) = S_position(t, p3_new(1), p3_new(2), p3_new(3), p3_new(4), p3_new(5), p3_new(6), p3_new(7), p3_new(8), p3_new(9), p3_new(10),p3_new(11), p3_new(12), p3_new(13), p3_new(14), p3_new(15), p3_new(16));
-    qd4(i) = S_position(t, p4_new(1), p4_new(2), p4_new(3), p4_new(4), p4_new(5), p4_new(6), p4_new(7), p4_new(8), p4_new(9), p4_new(10),p4_new(11), p4_new(12), p4_new(13), p4_new(14), p4_new(15), p4_new(16));
-    qd5(i) = S_position(t, p5_new(1), p5_new(2), p5_new(3), p5_new(4), p5_new(5), p5_new(6), p5_new(7), p5_new(8), p5_new(9), p5_new(10),p5_new(11), p5_new(12), p5_new(13), p5_new(14), p5_new(15), p5_new(16));
-    qd6(i) = S_position(t, p6_new(1), p6_new(2), p6_new(3), p6_new(4), p6_new(5), p6_new(6), p6_new(7), p6_new(8), p6_new(9), p6_new(10),p6_new(11), p6_new(12), p6_new(13), p6_new(14), p6_new(15), p6_new(16));
-    qdd1(i) = S_acceleration(t, p1_new(1), p1_new(2), p1_new(3), p1_new(4), p1_new(5), p1_new(6), p1_new(7), p1_new(8), p1_new(9), p1_new(10),p1_new(11), p1_new(12), p1_new(13), p1_new(14), p1_new(15), p1_new(16));
-    qdd2(i) = S_acceleration(t, p2_new(1), p2_new(2), p2_new(3), p2_new(4), p2_new(5), p2_new(6), p2_new(7), p2_new(8), p2_new(9), p2_new(10),p2_new(11), p2_new(12), p2_new(13), p2_new(14), p2_new(15), p2_new(16));
-    qdd3(i) = S_acceleration(t, p3_new(1), p3_new(2), p3_new(3), p3_new(4), p3_new(5), p3_new(6), p3_new(7), p3_new(8), p3_new(9), p3_new(10),p3_new(11), p3_new(12), p3_new(13), p3_new(14), p3_new(15), p3_new(16));
-    qdd4(i) = S_acceleration(t, p4_new(1), p4_new(2), p4_new(3), p4_new(4), p4_new(5), p4_new(6), p4_new(7), p4_new(8), p4_new(9), p4_new(10),p4_new(11), p4_new(12), p4_new(13), p4_new(14), p4_new(15), p4_new(16));
-    qdd5(i) = S_acceleration(t, p5_new(1), p5_new(2), p5_new(3), p5_new(4), p5_new(5), p5_new(6), p5_new(7), p5_new(8), p5_new(9), p5_new(10),p5_new(11), p5_new(12), p5_new(13), p5_new(14), p5_new(15), p5_new(16));
-    qdd6(i) = S_acceleration(t, p6_new(1), p6_new(2), p6_new(3), p6_new(4), p6_new(5), p6_new(6), p6_new(7), p6_new(8), p6_new(9), p6_new(10),p6_new(11), p6_new(12), p6_new(13), p6_new(14), p6_new(15), p6_new(16));
+%     qd1(i) = S_position(t, p1_new(1), p1_new(2), p1_new(3), p1_new(4), p1_new(5), p1_new(6), p1_new(7), p1_new(8), p1_new(9), p1_new(10),p1_new(11), p1_new(12), p1_new(13), p1_new(14), p1_new(15), p1_new(16));
+%     qd2(i) = S_position(t, p2_new(1), p2_new(2), p2_new(3), p2_new(4), p2_new(5), p2_new(6), p2_new(7), p2_new(8), p2_new(9), p2_new(10),p2_new(11), p2_new(12), p2_new(13), p2_new(14), p2_new(15), p2_new(16));
+%     qd3(i) = S_position(t, p3_new(1), p3_new(2), p3_new(3), p3_new(4), p3_new(5), p3_new(6), p3_new(7), p3_new(8), p3_new(9), p3_new(10),p3_new(11), p3_new(12), p3_new(13), p3_new(14), p3_new(15), p3_new(16));
+%     qd4(i) = S_position(t, p4_new(1), p4_new(2), p4_new(3), p4_new(4), p4_new(5), p4_new(6), p4_new(7), p4_new(8), p4_new(9), p4_new(10),p4_new(11), p4_new(12), p4_new(13), p4_new(14), p4_new(15), p4_new(16));
+%     qd5(i) = S_position(t, p5_new(1), p5_new(2), p5_new(3), p5_new(4), p5_new(5), p5_new(6), p5_new(7), p5_new(8), p5_new(9), p5_new(10),p5_new(11), p5_new(12), p5_new(13), p5_new(14), p5_new(15), p5_new(16));
+%     qd6(i) = S_position(t, p6_new(1), p6_new(2), p6_new(3), p6_new(4), p6_new(5), p6_new(6), p6_new(7), p6_new(8), p6_new(9), p6_new(10),p6_new(11), p6_new(12), p6_new(13), p6_new(14), p6_new(15), p6_new(16));
+%     qdd1(i) = S_acceleration(t, p1_new(1), p1_new(2), p1_new(3), p1_new(4), p1_new(5), p1_new(6), p1_new(7), p1_new(8), p1_new(9), p1_new(10),p1_new(11), p1_new(12), p1_new(13), p1_new(14), p1_new(15), p1_new(16));
+%     qdd2(i) = S_acceleration(t, p2_new(1), p2_new(2), p2_new(3), p2_new(4), p2_new(5), p2_new(6), p2_new(7), p2_new(8), p2_new(9), p2_new(10),p2_new(11), p2_new(12), p2_new(13), p2_new(14), p2_new(15), p2_new(16));
+%     qdd3(i) = S_acceleration(t, p3_new(1), p3_new(2), p3_new(3), p3_new(4), p3_new(5), p3_new(6), p3_new(7), p3_new(8), p3_new(9), p3_new(10),p3_new(11), p3_new(12), p3_new(13), p3_new(14), p3_new(15), p3_new(16));
+%     qdd4(i) = S_acceleration(t, p4_new(1), p4_new(2), p4_new(3), p4_new(4), p4_new(5), p4_new(6), p4_new(7), p4_new(8), p4_new(9), p4_new(10),p4_new(11), p4_new(12), p4_new(13), p4_new(14), p4_new(15), p4_new(16));
+%     qdd5(i) = S_acceleration(t, p5_new(1), p5_new(2), p5_new(3), p5_new(4), p5_new(5), p5_new(6), p5_new(7), p5_new(8), p5_new(9), p5_new(10),p5_new(11), p5_new(12), p5_new(13), p5_new(14), p5_new(15), p5_new(16));
+%     qdd6(i) = S_acceleration(t, p6_new(1), p6_new(2), p6_new(3), p6_new(4), p6_new(5), p6_new(6), p6_new(7), p6_new(8), p6_new(9), p6_new(10),p6_new(11), p6_new(12), p6_new(13), p6_new(14), p6_new(15), p6_new(16));
 
     i = i+1;
 end
@@ -74,67 +74,67 @@ traj(1,:) = q1;traj(2,:) = q2;traj(3,:) = q3;
 traj(4,:) = q4;traj(5,:) = q5;traj(6,:) = q6;
 
 %% 保存生成的轨迹曲线
-save traj traj;
+ save traj_121 traj;
 
-figure(1);
+% figure(1);
+% % plot(traj(1,:));
+% subplot(3,1,1)
 % plot(traj(1,:));
-subplot(3,1,1)
-plot(traj(1,:));
-subplot(3,1,2)
-plot(traj(2,:));
-subplot(3,1,3)
-plot(traj(3,:));
-
-figure(2);
-subplot(3,1,1)
-plot(traj(4,:));
-subplot(3,1,2)
-plot(traj(5,:));
-subplot(3,1,3)
-plot(traj(6,:));
+% subplot(3,1,2)
+% plot(traj(2,:));
+% subplot(3,1,3)
+% plot(traj(3,:));
+% 
+% figure(2);
+% subplot(3,1,1)
+% plot(traj(4,:));
+% subplot(3,1,2)
+% plot(traj(5,:));
+% subplot(3,1,3)
+% plot(traj(6,:));
 
 
-vel = [];
-vel(1,:) = qd1;vel(2,:) = qd2;vel(3,:) = qd3;
-vel(4,:) = qd4;vel(5,:) = qd5;vel(6,:) = qd6;
+% vel = [];
+% vel(1,:) = qd1;vel(2,:) = qd2;vel(3,:) = qd3;
+% vel(4,:) = qd4;vel(5,:) = qd5;vel(6,:) = qd6;
+% 
+% figure(3);
+% % plot(traj(1,:));
+% subplot(3,1,1)
+% plot(vel(1,:));
+% subplot(3,1,2)
+% plot(vel(2,:));
+% subplot(3,1,3)
+% plot(vel(3,:));
+% 
+% figure(4);
+% subplot(3,1,1)
+% plot(vel(4,:));
+% subplot(3,1,2)
+% plot(vel(5,:));
+% subplot(3,1,3)
+% plot(vel(6,:));
 
-figure(3);
-% plot(traj(1,:));
-subplot(3,1,1)
-plot(vel(1,:));
-subplot(3,1,2)
-plot(vel(2,:));
-subplot(3,1,3)
-plot(vel(3,:));
-
-figure(4);
-subplot(3,1,1)
-plot(vel(4,:));
-subplot(3,1,2)
-plot(vel(5,:));
-subplot(3,1,3)
-plot(vel(6,:));
-
-acc = [];
-acc(1,:) = qdd1;acc(2,:) = qdd2;acc(3,:) = qdd3;
-acc(4,:) = qdd4;acc(5,:) = qdd5;acc(6,:) = qdd6;
-
-figure(5);
-% plot(traj(1,:));
-subplot(3,1,1)
-plot(acc(1,:));
-subplot(3,1,2)
-plot(acc(2,:));
-subplot(3,1,3)
-plot(acc(3,:));
-
-figure(6);
-subplot(3,1,1)
-plot(acc(4,:));
-subplot(3,1,2)
-plot(acc(5,:));
-subplot(3,1,3)
-plot(acc(6,:));
+% acc = [];
+% acc(1,:) = qdd1;acc(2,:) = qdd2;acc(3,:) = qdd3;
+% acc(4,:) = qdd4;acc(5,:) = qdd5;acc(6,:) = qdd6;
+% 
+% figure(5);
+% % plot(traj(1,:));
+% subplot(3,1,1)
+% plot(acc(1,:));
+% subplot(3,1,2)
+% plot(acc(2,:));
+% subplot(3,1,3)
+% plot(acc(3,:));
+% 
+% figure(6);
+% subplot(3,1,1)
+% plot(acc(4,:));
+% subplot(3,1,2)
+% plot(acc(5,:));
+% subplot(3,1,3)
+% plot(acc(6,:));
 
 end
 
