@@ -20,6 +20,7 @@ hold on;
 plot(t,q5,'k');
 hold on;
 plot(t,q6,'g');
+title("关节位移图");
 
 torque = load('t_filer_before_excite.mat');
 tor = getfield(torque,'ans');
@@ -41,4 +42,4 @@ hold on;
 plot(t,t5,'k');
 hold on;
 plot(t,t6,'g');
-
+title("关节力矩图");

@@ -74,7 +74,7 @@ traj(1,:) = q1;traj(2,:) = q2;traj(3,:) = q3;
 traj(4,:) = q4;traj(5,:) = q5;traj(6,:) = q6;
 
 %% 保存生成的轨迹曲线
- save traj_121 traj;
+ save traj_165 traj;
 
 % figure(1);
 % % plot(traj(1,:));
