@@ -7,8 +7,8 @@ function traj = STraj(from,to,velRatio,accRatio)
 % acc = [1.7 1.7 1.7 1.7 1.7 1.7]*accRatio;
 % jerk = [5 5 5 5 5 5]*0.4;
 
-%vel = [5.76  4.53  6.98  7.85  6.98  1.05]*velRatio*0.4;
-vel = [2.88  2.26  3.5  3.9  3.5  1.05]*velRatio*0.4;
+%vel = [5.76  4.53  6.98  7.85  6.98  1.05]*velRatio*0.4; %v(6)改变数据节点441
+vel = [2.88  2.26  3.5  3.9  3.5  1.5]*velRatio*0.4;
 acc = [1.5 1.4 1.6 1.6 1.6 0.7]*accRatio;
 jerk = [5 5 5 5 5 5]*0.35;
 
@@ -74,12 +74,12 @@ traj(1,:) = q1;traj(2,:) = q2;traj(3,:) = q3;
 traj(4,:) = q4;traj(5,:) = q5;traj(6,:) = q6;
 
 %% 保存生成的轨迹曲线
- save traj_380 traj;
+ save traj_460 traj;
 
-% figure(1);
+figure(1);
 % % plot(traj(1,:));
 % subplot(3,1,1)
-% plot(traj(1,:));
+plot(traj(1,:));
 % subplot(3,1,2)
 % plot(traj(2,:));
 % subplot(3,1,3)
@@ -100,9 +100,9 @@ vel = [];
 % vel(3,:) = qd3;
 % vel(4,:) = qd4;
 % vel(5,:) = qd5;
- vel(6,:) = qd6;
+%  vel(6,:) = qd6;
 % 
-figure(3);
+% figure(3);
 % plot(vel(1,:));
 % plot(vel(2,:));
 % subplot(3,1,1)
@@ -118,7 +118,7 @@ figure(3);
 % subplot(3,1,2)
 % plot(vel(5,:));
 % subplot(3,1,3)
- plot(vel(6,:));
+%  plot(vel(6,:));
 
 % acc = [];
 % acc(1,:) = qdd1;acc(2,:) = qdd2;acc(3,:) = qdd3;
