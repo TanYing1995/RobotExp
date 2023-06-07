@@ -11,8 +11,12 @@ tTrain = output_test;
 tPred = predict(net, xTrain);
 tPred = double(tPred); % 将LSTM网络的输出cell数组转换为矩阵
 
+rmse = [];
+for i = 1:6
+    rmse(i) = sqrt(mean((tTrain(i,:)-YPred(i,:)).^2));
+end
 
-i = 6;
+i = 5;
 figure(1);
 plot(tTrain(i,:),'b');
 % plot(tPred(1,:),'r');
