@@ -48,17 +48,7 @@ for i = 1:num_subdirs
     xTrain = input_data;
     tTrain = output_data; 
     
-    [nrows, ncols] = size(xTrain);
-    for k=1:nrows
-        row = xTrain(k,:);
-        min_val = min(row);
-        max_val = max(row);
-        if min_val == max_val
-            xTrain(k,:) = 0;
-        else
-            xTrain(k,:) = (row - min_val) / (max_val - min_val);
-        end
-    end
+    
     
     % 使用已经创建的LSTM网络结构进行训练
     net = trainNetwork(xTrain, tTrain, layers, options);

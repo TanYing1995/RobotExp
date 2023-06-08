@@ -1,5 +1,5 @@
 
-data_dir = 'I:\Experiments\LSTM\力矩数据\12';
+data_dir = 'I:\Experiments\LSTM\力矩数据\d1';
 
 input_test = load(fullfile(data_dir, 'input.mat')).input;
 output_test = load(fullfile(data_dir, 'torque.mat')).x;

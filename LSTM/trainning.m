@@ -64,7 +64,7 @@ for i = 1:num_subdirs
         sequenceInputLayer(numFeatures)
         lstmLayer(2*numHiddenUnits,'OutputMode','sequence')
         lstmLayer(numHiddenUnits,'OutputMode','sequence')
-        fullyConnectedLayer(100)
+        fullyConnectedLayer(200)
         fullyConnectedLayer(numResponses)
         regressionLayer];
 

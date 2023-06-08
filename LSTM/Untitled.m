@@ -1,3 +1,4 @@
+
 % 数据所在的父目录
 data_dir = 'I:\Experiments\LSTM\力矩数据';
 
@@ -5,18 +6,43 @@ data_dir = 'I:\Experiments\LSTM\力矩数据';
 all_subdirs = dir(data_dir);
 num_subdirs = length(all_subdirs);
 
+lgraph = layerGraph();
+
 % 定义LSTM网络结构
 numFeatures = 12; % 输入数据特征数量
 numResponses = 6; % 输出数据响应数量
 numHiddenUnits = 128; % LSTM隐藏层神经元数量
 
-layers = [ ...
-    sequenceInputLayer(numFeatures)
-    lstmLayer(2*numHiddenUnits,'OutputMode','sequence')
-    lstmLayer(numHiddenUnits,'OutputMode','sequence')
-    fullyConnectedLayer(256);
-    fullyConnectedLayer(numResponses);
-    regressionLayer];
+% 添加 sequence input layer
+inputLayer = sequenceInputLayer(numFeatures, 'Name', 'input');
+lgraph = addLayers(lgraph, inputLayer);
+
+% 添加第一个 LSTM 层
+lstmLayer1 = lstmLayer(2*numHiddenUnits,'OutputMode','sequence', 'Name', 'lstm1');
+lgraph = addLayers(lgraph, lstmLayer1);
+
+% 添加第二个 LSTM 层
+lstmLayer2 = lstmLayer(numHiddenUnits,'OutputMode','sequence', 'Name', 'lstm2');
+lgraph = addLayers(lgraph, lstmLayer2);
+
+% 添加 fully connected layer
+fcLayer = fullyConnectedLayer(256, 'Name', 'fc');
+lgraph = addLayers(lgraph, fcLayer);
+
+% 添加另一个 fully connected layer
+fcLayer2 = fullyConnectedLayer(numResponses, 'Name', 'fc2');
+lgraph = addLayers(lgraph, fcLayer2);
+
+% 添加 regression layer
+outputLayer = regressionLayer('Name', 'output');
+lgraph = addLayers(lgraph, outputLayer);
+
+% 连接层
+lgraph = connectLayers(lgraph, 'input', 'lstm1');
+lgraph = connectLayers(lgraph, 'lstm1', 'lstm2');
+lgraph = connectLayers(lgraph, 'lstm2', 'fc');
+lgraph = connectLayers(lgraph, 'fc', 'fc2');
+lgraph = connectLayers(lgraph, 'fc2', 'output');
 
 % 定义训练选项和结果评估指标
 options = trainingOptions('adam', ...
@@ -24,8 +50,8 @@ options = trainingOptions('adam', ...
     'GradientThreshold',1, ...
     'InitialLearnRate',0.01, ...
     'LearnRateSchedule','piecewise', ...
-    'LearnRateDropFactor',0.5, ...
-    'LearnRateDropPeriod',80, ...
+    'LearnRateDropFactor',0.9, ...
+    'LearnRateDropPeriod',100, ...
     'Verbose',1, ...
     'Plots','training-progress');
 
@@ -46,22 +72,10 @@ for i = 1:num_subdirs
     output_data = load(output_data_filename).x;
 
     xTrain = input_data;
-    tTrain = output_data; 
-    
-    [nrows, ncols] = size(xTrain);
-    for k=1:nrows
-        row = xTrain(k,:);
-        min_val = min(row);
-        max_val = max(row);
-        if min_val == max_val
-            xTrain(k,:) = 0;
-        else
-            xTrain(k,:) = (row - min_val) / (max_val - min_val);
-        end
-    end
+    tTrain = output_data; % 目标预测数据不需归一化处理
     
     % 使用已经创建的LSTM网络结构进行训练
-    net = trainNetwork(xTrain, tTrain, layers, options);
+    net = trainNetwork(xTrain, tTrain, lgraph, options);
 
     % 对训练数据进行预测，并计算RMSE误差
 %     YPred = predict(net, xTrain);
