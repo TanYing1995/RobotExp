@@ -1,7 +1,7 @@
 % 获取训练数据集中的最值向量
 [input_max,input_min,output_max,output_min] = get_max_min();
 
-dir = 'I:\Experiments\LSTM\力矩数据\2'; 
+dir = 'I:\Experiments\LSTM\力矩数据\1'; 
 % data_dir = 'I:\Experiments\LSTM\数据\2';
 
 input_test = load(fullfile(dir, 'input.mat')).input;

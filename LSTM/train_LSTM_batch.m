@@ -101,37 +101,55 @@ for i = 1:num_subdirs
     input_data = load(input_data_filename).input;
     output_data = load(output_data_filename).x;
 
-    xTrain = input_data;
-    tTrain = output_data; 
+    %% 将所有的训练数据划分为800长度的子数据序列训练
     
-    % 训练输入数据归一化 [-1,1]
-    [nrows, ncols] = size(xTrain);
-    for k=1:nrows
-        row = xTrain(k,:);
-        max_val = input_max(k,1);
-        min_val = input_min(k,1);
-        if min_val == max_val
-            xTrain(k,:) = 0;
+    input_size = size(input_data);
+    num_sub_matrices = ceil(input_size(2) / 800); 
+    
+    for kk = 1:num_sub_matrices
+        begin_idx = (kk-1)*800+1;
+        end_idx = begin_idx+799;
+        if end_idx < input_size(2)
+            xTrain = input_data(:,begin_idx:end_idx);
+            tTrain = output_data(:,begin_idx:end_idx); 
         else
-            xTrain(k,:) = ((row - min_val) / (max_val - min_val))*2-1;
+            xTrain = input_data(:,begin_idx:input_size(2));
+            tTrain = output_data(:,begin_idx:input_size(2)); 
         end
-    end
-    
-    % 训练输出数据归一化 [-1,1]
-     for k=1:6
-        row = tTrain(k,:);
-        max_val = output_max(k,1);
-        min_val = output_min(k,1);
-        if min_val == max_val
-            tTrain(k,:) = 0;
-        else
-            tTrain(k,:) = ((row - min_val) / (max_val - min_val))*2-1;
+        
+        % 对每一个子序列进行训练
+        
+        % 训练输入数据归一化 [-1,1]
+        [nrows, ncols] = size(xTrain);
+        for k=1:nrows
+            row = xTrain(k,:);
+            max_val = input_max(k,1);
+            min_val = input_min(k,1);
+            if min_val == max_val
+                xTrain(k,:) = 0;
+            else
+                xTrain(k,:) = ((row - min_val) / (max_val - min_val))*2-1;
+            end
         end
-    end
-    
-    % 使用已经创建的LSTM网络结构进行训练
-    net = trainNetwork(xTrain, tTrain, layers, options);
 
+        % 训练输出数据归一化 [-1,1]
+         for k=1:6
+            row = tTrain(k,:);
+            max_val = output_max(k,1);
+            min_val = output_min(k,1);
+            if min_val == max_val
+                tTrain(k,:) = 0;
+            else
+                tTrain(k,:) = ((row - min_val) / (max_val - min_val))*2-1;
+            end
+        end
+
+        % 使用已经创建的LSTM网络结构进行训练
+        net = trainNetwork(xTrain, tTrain, layers, options);   
+    end
+    
+    
+    
     % 对训练数据进行预测，并计算RMSE误差
 %     YPred = predict(net, xTrain);
 %     YPred = double(YPred);
