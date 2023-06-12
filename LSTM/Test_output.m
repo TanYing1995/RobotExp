@@ -8,7 +8,7 @@
 % num_subdirs = length(all_subdirs);
 % 随机选取训练数据
 % idx = randi(20);
-idx = 12;
+idx = 19;
 adir = ['I:\Experiments\LSTM\力矩数据\',num2str(idx)]; 
 % data_dir = 'I:\Experiments\LSTM\数据\2';
 

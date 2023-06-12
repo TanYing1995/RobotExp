@@ -1,3 +1,7 @@
+%{
+    输入为12xn的序列，输出为单个关节的力矩序列，修改output为对应关节的1xn序列
+%}
+
 % 数据所在的父目录
 data_dir = 'I:\Experiments\LSTM\力矩数据';
 
@@ -7,27 +11,28 @@ num_subdirs = length(all_subdirs);
 
 % 定义LSTM网络结构
 numFeatures = 12; % 输入数据特征数量
-numResponses = 6; % 输出数据响应数量
+numResponses = 1; % 输出数据响应数量
 numHiddenUnits = 128; % LSTM隐藏层神经元数量
 % dropoutLayer(0.1)
 %bilstmLayer(2*numHiddenUnits,'OutputMode','sequence')
 %     lstmLayer(numHiddenUnits,'OutputMode','sequence')
+
 layers = [ ...
     sequenceInputLayer(numFeatures)
-    lstmLayer(numHiddenUnits,'OutputMode','sequence')
+    lstmLayer(2*numHiddenUnits,'OutputMode','sequence')
+    fullyConnectedLayer(100)
     
-    fullyConnectedLayer(64)
-    reluLayer()
+    tanhLayer()
     fullyConnectedLayer(numResponses)
     regressionLayer];
 % 
 % 定义训练选项和结果评估指标
 options = trainingOptions('adam', ...
-    'MaxEpochs',300, ...
+    'MaxEpochs',500, ...
     'GradientThreshold',1, ...
     'InitialLearnRate',0.01, ...
     'LearnRateSchedule','piecewise', ...
-    'LearnRateDropFactor',0.5, ...
+    'LearnRateDropFactor',0.6, ...
     'LearnRateDropPeriod',100, ...
     'Verbose',1);
 % , ...
@@ -83,12 +88,12 @@ for i = 1:num_subdirs
         end
     end
 end
-%%
+%% 训练过程
 for i = 1:num_subdirs  
     
     % 获取当前子目录名称
     subdir_name = all_subdirs(i).name;
-    
+    disp(['正在训练第',subdir_name,'个样本']);
     % 如果当前项不是一个子目录，则忽略
     if strcmp(subdir_name, '.') || strcmp(subdir_name, '..') || ~isdir(fullfile(data_dir, subdir_name))
         continue;
@@ -100,19 +105,51 @@ for i = 1:num_subdirs
     input_data = load(input_data_filename).input;
     output_data = load(output_data_filename).x;
 
-    %% 将所有的训练数据划分为800长度的子数据序列训练
-    sub_size = 800;
-    offset = 600;% 重叠序列时的序列偏移长度
+    xTrain = input_data;
+    tTrain = output_data; 
+    
+    % 训练输入数据归一化 [-1,1]
+    [nrows, ncols] = size(xTrain);
+    for k=1:nrows
+        row = xTrain(k,:);
+        max_val = input_max(k,1);
+        min_val = input_min(k,1);
+        if min_val == max_val
+            xTrain(k,:) = 0;
+        else
+            xTrain(k,:) = ((row - min_val) / (max_val - min_val))*2-1;
+        end
+    end
+    
+    % 训练输出数据归一化 [-1,1]
+     for k=1:6
+        row = tTrain(k,:);
+        max_val = output_max(k,1);
+        min_val = output_min(k,1);
+        if min_val == max_val
+            tTrain(k,:) = 0;
+        else
+            tTrain(k,:) = ((row - min_val) / (max_val - min_val))*2-1;
+        end
+     end
+    
+    % 训练过程中的输出,单独出一列
+    yTrain = tTrain(1,:);
+     
+    % 使用已经创建的LSTM网络结构进行训练
+    net = trainNetwork(xTrain, yTrain, layers, options);
+
+%% 将所有的训练数据划分为800长度的子数据序列训练
+    sub_size = 1200;
+    offset = 900;% 重叠序列时的序列偏移长度
     input_size = size(input_data);
     num_sub_matrices = ceil(input_size(2) / sub_size); 
     begin_idx = 1;
-    end_idx = 800;
+    end_idx = sub_size;
     
 %     for kk = 1:num_sub_matrices
 %         begin_idx = (kk-1)*sub_size+1;
-%         if begin_idx > 600
-%             begin_idx  = begin_idx - 600;
-%         end
+% 
 %         end_idx = begin_idx+sub_size-1;
 %         if end_idx < input_size(2)
 %             xTrain = input_data(:,begin_idx:end_idx);
@@ -147,61 +184,67 @@ for i = 1:num_subdirs
 %             else
 %                 tTrain(k,:) = ((row - min_val) / (max_val - min_val))*2-1;
 %             end
-%         end
-% 
+%          end
+%     
+%         yTrain = tTrain(1,:);
 %         % 使用已经创建的LSTM网络结构进行训练
-%         net = trainNetwork(xTrain, tTrain, layers, options);  
-     
+%         net = trainNetwork(xTrain, yTrain, layers, options);  
+%      
 %     end
     
 %     序列重叠训练版本,前提：训练序列的时间长度不能过短
    
-    while begin_idx < end_idx && end_idx <= input_size(2)
-        
-        xTrain = input_data(:,begin_idx:end_idx);
-        tTrain = output_data(:,begin_idx:end_idx); 
-        
-%         训练输入数据归一化 [-1,1]
-        [nrows, ncols] = size(xTrain);
-        for k=1:nrows
-            row = xTrain(k,:);
-            max_val = input_max(k,1);
-            min_val = input_min(k,1);
-            if min_val == max_val
-                xTrain(k,:) = 0;
-            else
-                xTrain(k,:) = ((row - min_val) / (max_val - min_val))*2-1;
-            end
-        end
+%     while begin_idx < end_idx && end_idx <= input_size(2)
+%         
+%         xTrain = input_data(:,begin_idx:end_idx);
+%         tTrain = output_data(:,begin_idx:end_idx); 
+%         
+% %         训练输入数据归一化 [-1,1]
+%         [nrows, ncols] = size(xTrain);
+%         for k=1:nrows
+%             row = xTrain(k,:);
+%             max_val = input_max(k,1);
+%             min_val = input_min(k,1);
+%             if min_val == max_val
+%                 xTrain(k,:) = 0;
+%             else
+%                 xTrain(k,:) = ((row - min_val) / (max_val - min_val))*2-1;
+%             end
+%         end
+% 
+%         % 训练输出数据归一化 [-1,1]
+%          for k=1:6
+%             row = tTrain(k,:);
+%             max_val = output_max(k,1);
+%             min_val = output_min(k,1);
+%             if min_val == max_val
+%                 tTrain(k,:) = 0;
+%             else
+%                 tTrain(k,:) = ((row - min_val) / (max_val - min_val))*2-1;
+%             end
+%          end
+%         
+%          yTrain = tTrain(1,:);
+%         
+%         % 使用已经创建的LSTM网络结构进行训练
+%         net = trainNetwork(xTrain, yTrain, layers, options); 
+%         
+%         
+%         begin_idx = begin_idx+offset;
+%         end_idx = begin_idx+sub_size-1;
+%         if end_idx > input_size(2)
+%             end_idx = input_size(2);
+%         end
+%                 
+%     end
+% 
 
-        % 训练输出数据归一化 [-1,1]
-         for k=1:6
-            row = tTrain(k,:);
-            max_val = output_max(k,1);
-            min_val = output_min(k,1);
-            if min_val == max_val
-                tTrain(k,:) = 0;
-            else
-                tTrain(k,:) = ((row - min_val) / (max_val - min_val))*2-1;
-            end
-        end
-
-        % 使用已经创建的LSTM网络结构进行训练
-        net = trainNetwork(xTrain, tTrain, layers, options); 
-        
-        
-        begin_idx = begin_idx+offset;
-        end_idx = begin_idx+sub_size-1;
-        if end_idx > input_size(2)
-            end_idx = input_size(2);
-        end
-                
-    end
-    
     % 对训练数据进行预测，并计算RMSE误差
 %     YPred = predict(net, xTrain);
 %     YPred = double(YPred);
 %     
 %     rmse = sqrt(mean((tTrain-YPred).^2));
 %     fprintf('Training RMSE: %.4f\n', rmse);
+
+    
 end
