@@ -8,8 +8,9 @@
 % num_subdirs = length(all_subdirs);
 % 随机选取训练数据
 % idx = randi(20);
-idx = 19;
-adir = ['I:\Experiments\LSTM\力矩数据\',num2str(idx)]; 
+idx = 8;
+% adir = ['I:\Experiments\LSTM\力矩数据\',num2str(idx)]; 
+adir = ['I:\Experiments\LSTM\数据\',num2str(idx)]; 
 % data_dir = 'I:\Experiments\LSTM\数据\2';
 
 input_test = load(fullfile(adir, 'input.mat')).input;
@@ -32,8 +33,15 @@ tTrain = output_test;
         end
     end
 
-tOut = predict(net, xTrain);
-tOut = double(tOut); % 将LSTM网络的输出cell数组转换为矩阵
+% 2xn输入序列
+zTrain = zeros(2,ncols);
+zTrain(1,:) = xTrain(1,:);
+zTrain(2,:) = xTrain(7,:);    
+tOut = predict(net, zTrain);
+tOut = double(tOut);
+
+% tOut = predict(net, xTrain);
+% tOut = double(tOut); % 将LSTM网络的输出cell数组转换为矩阵
 
 tPred = zeros(6,ncols);
 tPred(1,:) = tOut;
