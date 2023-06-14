@@ -19,13 +19,13 @@ numHiddenUnits = 128; % LSTM隐藏层神经元数量
 
 layers = [ ...
     sequenceInputLayer(numFeatures)
-    gruLayer(2*numHiddenUnits,'OutputMode','last')
+    lstmLayer(2*numHiddenUnits,'OutputMode','last')
     fullyConnectedLayer(numResponses)
     regressionLayer];
 % 
 % 定义训练选项和结果评估指标
 options = trainingOptions('adam', ...
-    'MaxEpochs',100, ...
+    'MaxEpochs',1000, ...
     'GradientThreshold',1, ...
     'InitialLearnRate',0.01, ...
     'LearnRateSchedule','piecewise', ...
@@ -82,7 +82,11 @@ for i = 1:num_subdirs
     end
    
 end
-%% 训练过程
+%% 构造输入输出同时归一化
+n = num_subdirs-2;
+zTrain_cell = cell(n,1);
+tTrain_cell = cell(n,1);
+tTrain_mat = zeros(n,1);
 for i = 1:num_subdirs  
     
     % 获取当前子目录名称
@@ -133,13 +137,13 @@ for i = 1:num_subdirs
     zTrain(2,:) = xTrain(7,:);
     
     %将训练的序列数据换成cell数组
-    zTrain_cell = num2cell(zTrain,1);
-    
-%     tTrain_cell = num2cell(repmat(tTrain, [1, ncols]));
-    tTrain_cell = ones(1,ncols)*tTrain;
-    tTrain_cell = transpose(tTrain_cell);
-%     tTrain_cell = {tTrain};
-    % 使用已经创建的LSTM网络结构进行训练
-    net = trainNetwork(zTrain_cell, tTrain_cell, layers, options);
-    
+   if i > 2
+        zTrain_cell{i-2} = zTrain;
+        tTrain_cell{i-2} = tTrain;
+        tTrain_mat(i-2,1) = tTrain;
+   end
 end
+
+net = trainNetwork(zTrain_cell, tTrain_mat, layers, options);
+
+
