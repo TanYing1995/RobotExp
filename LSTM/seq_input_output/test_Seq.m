@@ -26,7 +26,7 @@ for i = 1:num_subdirs
     % 读取输入和输出数据文件
     input_data_filename = fullfile(data_dir, subdir_name, 'input.mat');
     output_data_filename = fullfile(data_dir, subdir_name, 'torque.mat');
-    input_data = load(input_data_filename).input;% 12xn输入向量
+    input_data = load(input_data_filename).input; % 12xn输入向量
     output_data = load(output_data_filename).x; % 6xn输出向量
     
     % 输入最大值和最小值
@@ -122,7 +122,7 @@ for i = 1:num_subdirs
     
 end
 
-idx = 3;
+idx = 18;
 tPred = predict(net,zTrain_cell{idx});%输出为矩阵
 
 minval = output_min(1,1);
@@ -133,7 +133,7 @@ tAct = tTrain_cell{idx};
 tAct = 0.5*(tAct+1)*(maxval-minval)+minval;
 
 % 对预测结果平滑处理
-
+tPred = kalmanFileter(tPred);
 
 for i = 1 : 1
    figure(i); 

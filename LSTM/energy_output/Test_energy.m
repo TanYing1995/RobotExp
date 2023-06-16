@@ -115,12 +115,12 @@ for i = 1:num_subdirs
    end
 end
 
-    tOut = predict(net,zTrain_cell);
-    
-    max_val = output_max; % 获取当前行的最小值
-    min_val = output_min; % 获取当前行的最大值
+tOut = predict(net,zTrain_cell);
 
-    tOut = 0.5*(tOut+1)*(max_val - min_val) + min_val;   
+max_val = output_max; % 获取当前行的最小值
+min_val = output_min; % 获取当前行的最大值
+
+tOut = 0.5*(tOut+1)*(max_val - min_val) + min_val;   
 
 %% 网络预测
 % act_output = [];

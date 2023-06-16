@@ -14,31 +14,32 @@ numFeatures = 2; % 输入数据特征数量
 numResponses = 1; % 输出数据响应数量
 numHiddenUnits = 128; % LSTM隐藏层神经元数量
 % dropoutLayer(0.1)
-%bilstmLayer(2*numHiddenUnits,'OutputMode','sequence')
+% bilstmLayer(2*numHiddenUnits,'OutputMode','sequence')
 % lstmLayer(numHiddenUnits,'OutputMode','sequence')
 
 layers = [ ...
     sequenceInputLayer(numFeatures)
     lstmLayer(2*numHiddenUnits,'OutputMode','sequence')
-    
-    lstmLayer(32,'OutputMode','sequence')
+    dropoutLayer(0.1)
+    lstmLayer(numHiddenUnits/2,'OutputMode','sequence')
     fullyConnectedLayer(numResponses)
     regressionLayer];
 % 
 
-miniBatchSize = 2;
+miniBatchSize = 3;
 % 定义训练选项和结果评估指标
 options = trainingOptions('adam', ...
-    'MaxEpochs',600, ...
+    'MaxEpochs',200, ...
     'GradientThreshold',1, ...
     'MiniBatchSize',miniBatchSize, ...
     'InitialLearnRate',0.01, ...
     'LearnRateSchedule','piecewise', ...
     'LearnRateDropFactor',0.5, ...
-    'LearnRateDropPeriod',100, ...
-    'Verbose',1);
-% , ...
-%      'Plots','training-progress'
+    'LearnRateDropPeriod',50, ...
+    'Verbose',1,...
+    'Shuffle','every-epoch', ...
+     'Plots','training-progress');
+
 % 循环遍历每个子目录，读取并预处理输入输出数据，并使用已经创建的LSTM网络进行训练
 
 %% 输入输出归一化
@@ -157,9 +158,9 @@ for i = 1:num_subdirs
     
 end
 
-    % 输入为nx2的序列，输出为nx1的序列，训练和输出均为元胞数组
-    % 使用已经创建的LSTM网络结构进行训练
-    net = trainNetwork(zTrain_cell, tTrain_cell, layers, options);
+% 输入为nx2的序列，输出为nx1的序列，训练和输出均为元胞数组
+% 使用已经创建的LSTM网络结构进行训练
+net = trainNetwork(zTrain_cell, tTrain_cell, layers, options);
     
     
 

@@ -14,8 +14,8 @@ numFeatures = 2; % 输入数据特征数量
 numResponses = 1; % 输出数据响应数量
 numHiddenUnits = 128; % LSTM隐藏层神经元数量
 % dropoutLayer(0.1)
-%bilstmLayer(2*numHiddenUnits,'OutputMode','sequence')
-%     lstmLayer(numHiddenUnits,'OutputMode','sequence')
+% bilstmLayer(2*numHiddenUnits,'OutputMode','sequence')
+% lstmLayer(numHiddenUnits,'OutputMode','sequence')
 
 layers = [ ...
     sequenceInputLayer(numFeatures)
@@ -24,7 +24,7 @@ layers = [ ...
     regressionLayer];
 % 
 
-miniBatchSize = 3
+miniBatchSize = 3;
 % 定义训练选项和结果评估指标
 options = trainingOptions('adam', ...
     'MaxEpochs',600, ...
