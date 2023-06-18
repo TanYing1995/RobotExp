@@ -19,9 +19,8 @@ numHiddenUnits = 128; % LSTM隐藏层神经元数量
 
 layers = [ ...
     sequenceInputLayer(numFeatures)
-    lstmLayer(2*numHiddenUnits,'OutputMode','sequence')
-    dropoutLayer(0.1)
-    lstmLayer(numHiddenUnits/2,'OutputMode','sequence')
+    gruLayer(2*numHiddenUnits,'OutputMode','sequence')
+    
     fullyConnectedLayer(numResponses)
     regressionLayer];
 % 

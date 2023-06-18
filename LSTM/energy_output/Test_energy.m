@@ -111,7 +111,7 @@ for i = 1:num_subdirs
         zTrain_cell{i-2} = zTrain;
         tTrain_cell{i-2} = tTrain;
         tTrain_mat(i-2,1) = output_data(1,1);
-        
+   
    end
 end
 
@@ -123,9 +123,7 @@ min_val = output_min; % 获取当前行的最大值
 tOut = 0.5*(tOut+1)*(max_val - min_val) + min_val;   
 
 %% 网络预测
-% act_output = [];
-% prd_output = [];
-% 
+
 % for i = 1:num_subdirs  
 %      % 获取当前子目录名称
 %     subdir_name = all_subdirs(i).name;

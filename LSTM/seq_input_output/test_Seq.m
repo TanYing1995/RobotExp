@@ -122,7 +122,7 @@ for i = 1:num_subdirs
     
 end
 
-idx = 18;
+idx = 7;
 tPred = predict(net,zTrain_cell{idx});%输出为矩阵
 
 minval = output_min(1,1);
