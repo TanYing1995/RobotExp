@@ -10,24 +10,29 @@ y_train = y(1:offset);
 X_test = X(offset+1:end, :);
 y_test = y(offset+1:end);
 
-% 定义模型
-model = TreeBagger(50, X_train, y_train,'OOBPredictorImportance', 'on', 'Method', 'regression', 'Surrogate', 'on');
-% 
-% 特征重要性评估
-importances = oobPermutedPredictorImportance(model);
-[sorted_importances, index] = sort(importances, 'descend');
-fprintf('Feature Importance:\n');
-for i = 1:size(X, 2)
-    fprintf('Feature %d: %.4f\n', index(i), sorted_importances(i));
+% 训练模型并计算 OOB 错误
+model = TreeBagger(50, X_train, y_train, 'Method', 'regression', 'Surrogate', 'on', 'OOBPrediction', 'on');
+oob_error = oobError(model);
+
+% 对于每个特征，随机地将该列所有值打乱，并计算新的 OOB 错误
+num_features = size(X_train, 2);
+importances = zeros(num_features, 1);
+for i = 1:num_features
+    X_permuted = X_train;
+    X_permuted(:, i) = X_permuted(randperm(size(X_permuted, 1)), i);
+    model_permuted = TreeBagger(50, X_permuted, y_train, 'Method', 'regression', 'Surrogate', 'on', 'OOBPrediction', 'on');
+    oob_error_permuted = oobError(model_permuted);
+    importances(i) = oob_error_permuted - oob_error;
 end
 
-% 画出每个特征的重要性得分的 bar 图
+% 将结果可视化
+[sorted_importances, index] = sort(importances, 'descend');
 figure;
 bar(sorted_importances);
 title('Feature Importance');
 xlabel('Features');
 ylabel('Importance');
-
 xticklabels(index);
 xtickangle(45);
+
 
