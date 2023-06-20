@@ -1,7 +1,7 @@
 %% 根据位移曲线构造速度矩阵和 LSTM输入矩阵
 %%
 % 数据所在的父目录
-data_dir = 'I:\Experiments\LSTM\力矩数据';
+data_dir = 'I:\Experiments\LSTM\力矩数据-new';
 % data_dir = 'C:\Users\admin\Desktop\轨迹\test';
 % 获取所有子目录信息
 all_subdirs = dir(data_dir);
@@ -33,17 +33,11 @@ for i = 1:num_subdirs
     velocity = [zeros(6,1) velocity];
     
     %速度矩阵平滑处理，防止数据的突变
-%     [p,q] = size(velocity);
-%     vel = zeros(p,q);
-%     for i = 1 : p
-%         row_data= velocity(i,:);% 取出第i行数据
-%         row_data_smooth = smooth(row_data,5,'loess');  % 平滑处理
-%         vel(i,:) = row_data_smooth;
-%     end
+
     vel = kalman_filter(velocity);
     
-    input = [angle_data ; vel];
-    
+    input = [angle_data ; vel];% 输入矩阵
+
     save(fullfile([data_dir '\' subdir_name],'velocity.mat'),'vel'); 
     save(fullfile([data_dir '\' subdir_name],'input.mat'),'input'); 
 end

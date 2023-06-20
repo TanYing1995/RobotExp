@@ -12,7 +12,7 @@ num_subdirs = length(all_subdirs);
 %% 处理数据
 
 n = num_subdirs-2;  
-imp_all = zeros(n,size(x,2)); % 初始化特征重要性数组
+imp_all = zeros(n,12); % 初始化特征重要性数组
 
 for i = 1:num_subdirs  
     
