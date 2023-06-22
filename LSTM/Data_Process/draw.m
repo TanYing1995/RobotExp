@@ -5,8 +5,10 @@
 %
 
 % 数据所在的父目录
-% data_dir = 'I:\Experiments\LSTM\力矩数据-new';
-data_dir = 'I:\Experiments\LSTM\数据';
+% data_dir = 'I:\Experiments\LSTM\力矩数据';
+
+data_dir = 'I:\Experiments\LSTM\力矩数据-new';
+% data_dir = 'I:\Experiments\LSTM\数据';
 % 获取所有子目录信息
 all_subdirs = dir(data_dir);
 num_subdirs = length(all_subdirs);
@@ -33,7 +35,8 @@ for i = 1:num_subdirs
     torque_file = load(data_filename);%load后加载进来的数据是struct结构
 
     torque_data = torque_file.x;
-
+%     if size(torque_data,2) == 5316
+%         plot(torque_data(3,:));
+%     end
     plot(torque_data(3,:));
-
 end
