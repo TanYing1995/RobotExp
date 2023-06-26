@@ -18,7 +18,7 @@ function [input_max,input_min,output_max,output_min] = get_max_min()
 
 
 % 数据所在的父目录
-data_dir = 'I:\Experiments\LSTM\力矩数据';
+data_dir = 'I:\Experiments\LSTM\Data';
 
 % 获取所有子目录信息
 all_subdirs = dir(data_dir);

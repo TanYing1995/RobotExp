@@ -1,8 +1,9 @@
 %% 根据位移曲线构造速度矩阵和 LSTM输入矩阵
 %%
 % 数据所在的父目录
-data_dir = 'I:\Experiments\LSTM\力矩数据-new';
+% data_dir = 'I:\Experiments\LSTM\力矩数据-new';
 % data_dir = 'C:\Users\admin\Desktop\轨迹\test';
+data_dir = 'I:\Experiments\LSTM\数据集_3';
 % 获取所有子目录信息
 all_subdirs = dir(data_dir);
 num_subdirs = length(all_subdirs);
@@ -24,6 +25,7 @@ for i = 1:num_subdirs
     angle_data_file = load(angle_data_filename);
     
     angle_data = angle_data_file.expext_angle_array(2:7,:);
+    % 对计算得到的期望角度曲线滤波，减少突变带来的奇异值的影响
     m = size(angle_data,2);% 获取数据的列数，即数据点个数
     t = (0:m-1)*0.001; % 根据数据点个数生成时间序列，时间间隔为0.001秒
     

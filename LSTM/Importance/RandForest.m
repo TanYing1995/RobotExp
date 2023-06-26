@@ -82,6 +82,8 @@ for i = 1:cv.NumTestSets
 
     k = cell2mat(y_cell(trainIdx));
     
+    
+
     % 使用训练集训练随机森林回归模型
     Mdl = TreeBagger(50, X_train, k(:), 'Method', 'regression', 'OOBPredictorImportance', 'on');
     

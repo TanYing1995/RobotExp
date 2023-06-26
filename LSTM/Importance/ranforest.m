@@ -1,6 +1,7 @@
 
-% 数据所在的父目录
-data_dir = 'I:\Experiments\LSTM\力矩数据';
+% 数据集目录
+% data_dir = 'I:\Experiments\LSTM\Data';
+data_dir = 'I:\Experiments\LSTM\数据集_test';
 
 % 获取所有子目录信息
 all_subdirs = dir(data_dir);
@@ -32,7 +33,8 @@ for i = 1:num_subdirs
     [x , y] = Normalize(input_data,output_data,input_max,input_min,output_max,output_min);
 
     x = x';
-    y = y(1,:)';% 取关节1的力矩数据
+    % 取关节1的力矩数据
+    y = y(1,:)';
 
     % 随机森林回归模型训练
     Mdl = TreeBagger(50, x, y, 'Method', 'regression','OOBPredictorImportance','on');

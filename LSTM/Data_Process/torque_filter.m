@@ -1,8 +1,9 @@
 %% 过滤获取的力矩数据
 
 % 数据所在的父目录
-data_dir = 'I:\Experiments\LSTM\力矩数据-new';
+% data_dir = 'I:\Experiments\LSTM\力矩数据-new';
 % data_dir = 'C:\Users\admin\Desktop\轨迹\test';
+data_dir = 'I:\Experiments\LSTM\数据集_3';
 % 获取所有子目录信息
 all_subdirs = dir(data_dir);
 num_subdirs = length(all_subdirs);
@@ -27,9 +28,7 @@ for i = 1:num_subdirs
     torque_data = torque_file.torque_array(2:7,:);
     x = kalman_filter(torque_data);
 
-    save(fullfile([data_dir '\' subdir_name],'torque.mat'),'x'); 
-%   save(fullfile([data_dir '\' subdir_name],'velocity.mat'),'vel'); 
-    
+    save(fullfile([data_dir '\' subdir_name],'torque.mat'),'x');    
 end
 
 
