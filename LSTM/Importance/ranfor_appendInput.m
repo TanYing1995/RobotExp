@@ -1,6 +1,7 @@
 
 % 数据所在的父目录
-data_dir = 'I:\Experiments\LSTM\力矩数据';
+% data_dir = 'I:\Experiments\LSTM\力矩数据';
+data_dir = 'I:\Experiments\LSTM\Data';
 
 % 获取所有子目录信息
 all_subdirs = dir(data_dir);
@@ -52,7 +53,7 @@ for i = 1:num_subdirs
 
     if i > 2
         X_cell{end+1} = x;
-        y_cell{end+1} = y(1,:);% 回归数据为关节1力矩曲线
+        y_cell{end+1} = y(6,:);% 回归数据为关节1力矩曲线
     end
 end
 
@@ -96,8 +97,8 @@ for i = 1:cv.NumTestSets
     y_true = cell2mat(ff);
     
     % 计算模型的均方误差
-    mse = mean((y_pred - y_true).^2);
-    disp(['MSE of fold ', num2str(i), ': ', num2str(mse)]);
+    % mse = mean((y_pred - y_true).^2);
+    % disp(['MSE of fold ', num2str(i), ': ', num2str(mse)]);
     
     % 获取特征重要性
     imp_cell = Mdl.OOBPermutedVarDeltaError;
@@ -112,8 +113,4 @@ end
 imp_mean = mean(cat(1,imp_all{:}));
 
 % 可视化特征重要性
-figure;
-bar(imp_mean);
-title('Feature Importance');
-xlabel('Feature Index');
-ylabel('Importance');
+draw(imp_mean)

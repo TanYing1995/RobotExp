@@ -3,32 +3,33 @@
 %}
 
 % 数据所在的父目录
-data_dir = 'I:\Experiments\LSTM\力矩数据';
+% data_dir = 'I:\Experiments\LSTM\力矩数据';
+data_dir = 'I:\Experiments\LSTM\Data';
 
 % 获取所有子目录信息
 all_subdirs = dir(data_dir);
 num_subdirs = length(all_subdirs);
 
 % 定义LSTM网络结构
-numFeatures = 2; % 输入数据特征数量
+numFeatures = 12; % 输入数据特征数量
 numResponses = 1; % 输出数据响应数量
 numHiddenUnits = 128; % LSTM隐藏层神经元数量
+
 % dropoutLayer(0.1)
 % bilstmLayer(2*numHiddenUnits,'OutputMode','sequence')
 % lstmLayer(numHiddenUnits,'OutputMode','sequence')
 
 layers = [ ...
     sequenceInputLayer(numFeatures)
-    gruLayer(2*numHiddenUnits,'OutputMode','sequence')
-    
+    lstmLayer(2*numHiddenUnits,'OutputMode','sequence')
     fullyConnectedLayer(numResponses)
     regressionLayer];
 % 
 
-miniBatchSize = 3;
+miniBatchSize = 6;
 % 定义训练选项和结果评估指标
 options = trainingOptions('adam', ...
-    'MaxEpochs',200, ...
+    'MaxEpochs',300, ...
     'GradientThreshold',1, ...
     'MiniBatchSize',miniBatchSize, ...
     'InitialLearnRate',0.01, ...
@@ -36,9 +37,9 @@ options = trainingOptions('adam', ...
     'LearnRateDropFactor',0.5, ...
     'LearnRateDropPeriod',50, ...
     'Verbose',1,...
-    'Shuffle','every-epoch', ...
-     'Plots','training-progress');
-
+    'Shuffle','every-epoch');
+% , ...
+%      'Plots','training-progress'
 % 循环遍历每个子目录，读取并预处理输入输出数据，并使用已经创建的LSTM网络进行训练
 
 %% 输入输出归一化
@@ -150,7 +151,8 @@ for i = 1:num_subdirs
 %     yTrain = tTrain(1,:)'; % nx1
      
    if i > 2
-        zTrain_cell{i-2} = zTrain;
+       % 目前的输入是12xn
+        zTrain_cell{i-2} = xTrain;
         tTrain_cell{i-2} = tTrain(1,:);
 %         tTrain_mat(i-2,1) = tTrain;
    end

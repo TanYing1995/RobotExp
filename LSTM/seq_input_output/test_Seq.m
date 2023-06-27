@@ -1,6 +1,7 @@
 
 % 数据所在的父目录
-data_dir = 'I:\Experiments\LSTM\力矩数据';
+% data_dir = 'I:\Experiments\LSTM\力矩数据';
+data_dir = 'I:\Experiments\LSTM\Data';
 
 % 获取所有子目录信息
 all_subdirs = dir(data_dir);
@@ -66,7 +67,7 @@ for i = 1:num_subdirs
     
     % 获取当前子目录名称
     subdir_name = all_subdirs(i).name;
-    disp(['正在训练第',subdir_name,'个样本']);
+%     disp(['正在训练第',subdir_name,'个样本']);
     % 如果当前项不是一个子目录，则忽略
     if strcmp(subdir_name, '.') || strcmp(subdir_name, '..') || ~isdir(fullfile(data_dir, subdir_name))
         continue;
@@ -115,14 +116,16 @@ for i = 1:num_subdirs
 %     yTrain = tTrain(1,:)'; % nx1
      
    if i > 2
-        zTrain_cell{i-2} = zTrain;
+        zTrain_cell{i-2} = xTrain;
+%         zTrain_cell{i-2} = zTrain;
         tTrain_cell{i-2} = tTrain(1,:);
 %         tTrain_mat(i-2,1) = tTrain;
    end
     
 end
 
-idx = 7;
+
+idx = randi(n,1,1);
 tPred = predict(net,zTrain_cell{idx}); % 输出为矩阵
 
 minval = output_min(1,1);
