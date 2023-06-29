@@ -3,8 +3,8 @@
 %}
 
 % 数据所在的父目录
-% data_dir = 'I:\Experiments\LSTM\力矩数据';
-data_dir = 'I:\Experiments\LSTM\Data';
+data_dir = 'I:\Experiments\LSTM\力矩数据';
+% data_dir = 'I:\Experiments\LSTM\Data';
 
 % 获取所有子目录信息
 all_subdirs = dir(data_dir);
@@ -23,6 +23,7 @@ layers = [ ...
     sequenceInputLayer(numFeatures)
     lstmLayer(2*numHiddenUnits,'OutputMode','sequence')
     fullyConnectedLayer(numResponses)
+    dropoutLayer(0.1)
     regressionLayer];
 % 
 
