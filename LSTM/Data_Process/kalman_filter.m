@@ -4,6 +4,7 @@ function res = kalman_filter(input)
 % 定义状态变量、测量变量和观测矩阵
 A = eye(6);         % 状态转移矩阵
 C = eye(6);         % 观测矩阵
+
 Q = eye(6)*0.001;    % 过程噪声
 R = eye(6)*20;     % 测量噪声
 
