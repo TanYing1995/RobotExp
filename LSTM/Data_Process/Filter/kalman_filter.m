@@ -27,6 +27,5 @@ for k = 2:n
     P = (eye(6) - K*C)*P_pre;
 end
 res = x;
-
 end
 
