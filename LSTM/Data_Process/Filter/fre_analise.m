@@ -1,10 +1,10 @@
 % 加载数据
 % data = load('joint_torque_data.mat'); % 假设数据文件为 joint_torque_data.mat
-% torque = torque_array(2,:); 
-torque = filtered_torque;
+torque = torque_array(2,:); 
+% torque = filtered_torque;
 % 设置小波滤波参数
 wavelet = 'db4'; % 小波基函数，这里选择 Daubechies 4 小波
-level = 5; % 分解的尺度级数
+level = 6; % 分解的尺度级数
 
 % 进行小波分解
 [c, l] = wavedec(torque, level, wavelet); % 小波分解

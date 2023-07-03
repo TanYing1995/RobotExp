@@ -4,7 +4,7 @@ M = torque_array(2,:);
 % M = movmean(M, window_size); % 使用移动平均滤波器平滑数据
 % 定义小波变换的相关参数
 wavelet_name = 'db4'; % 小波基函数的名称，这里以 Daubechies 4（db4）为例
-level = 3; % 小波变换的层数，需要根据实际情况进行调整
+level = 6; % 小波变换的层数，需要根据实际情况进行调整
 
 % 对信号进行离散小波变换
 [c, l] = wavedec(M, level, wavelet_name);
