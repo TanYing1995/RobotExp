@@ -4,6 +4,9 @@
 % data_dir = 'I:\Experiments\LSTM\力矩数据';
 data_dir = 'I:\Experiments\LSTM\Data';
 
+torque_idx = 6;
+
+
 % 获取所有子目录信息
 all_subdirs = dir(data_dir);
 num_subdirs = length(all_subdirs);
@@ -119,13 +122,13 @@ for i = 1:num_subdirs
    if i > 2
         zTrain_cell{i-2} = xTrain;
 %         zTrain_cell{i-2} = zTrain;
-        tTrain_cell{i-2} = tTrain(1,:);
+        tTrain_cell{i-2} = tTrain(torque_idx,:);
 %         tTrain_mat(i-2,1) = tTrain;
    end
     
 end
 
-k = 30;
+k = 10;
 mae_list = zeros(1,k);
 rsme_list = zeros(1,k);
 cnt = zeros(1,k);
@@ -135,8 +138,8 @@ for i = 1 : k
     idx = randi(n,1,1);
     tPred = predict(net,zTrain_cell{idx}); % 输出为矩阵
     
-    minval = output_min(1,1);
-    maxval = output_max(1,1);
+    minval = output_min(torque_idx,1);
+    maxval = output_max(torque_idx,1);
     
     tPred = 0.5*(tPred+1)*(maxval-minval)+minval;
     tAct = tTrain_cell{idx};
@@ -178,6 +181,6 @@ len = size(tAct,2);
 % title("较大偏离值点比率")
 % xlabel("样本序号")
 
-plot_scatter_with_line_and_circle(n,mae_list);
-plot_scatter_with_line_and_circle(n,rsme_list);
-plot_scatter_with_line_and_circle(n,cnt);
+plot_scatter_with_line_and_circle(size(mae_list,2),mae_list,"平均绝对误差 MAE")
+plot_scatter_with_line_and_circle(size(rsme_list,2),rsme_list,"均方根误差 RSME") 
+plot_scatter_with_line_and_circle(size(cnt,2),cnt,"较大偏离值点比率")

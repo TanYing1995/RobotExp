@@ -3,8 +3,9 @@
 %}
 
 % 数据所在的父目录
-data_dir = 'I:\Experiments\LSTM\力矩数据';
-% data_dir = 'I:\Experiments\LSTM\Data';
+% data_dir = 'I:\Experiments\LSTM\力矩数据';
+data_dir = 'I:\Experiments\LSTM\Data';
+torque_idx = 6;
 
 % 获取所有子目录信息
 all_subdirs = dir(data_dir);
@@ -18,25 +19,24 @@ numHiddenUnits = 128; % LSTM隐藏层神经元数量
 % dropoutLayer(0.1)
 % bilstmLayer(2*numHiddenUnits,'OutputMode','sequence')
 % lstmLayer(numHiddenUnits,'OutputMode','sequence')
-
+% dropoutLayer(0.1)
 layers = [ ...
     sequenceInputLayer(numFeatures)
-    lstmLayer(2*numHiddenUnits,'OutputMode','sequence')
+    lstmLayer(numHiddenUnits,'OutputMode','sequence')
     fullyConnectedLayer(numResponses)
-    dropoutLayer(0.1)
     regressionLayer];
 % 
 
-miniBatchSize = 6;
+miniBatchSize = 8;
 % 定义训练选项和结果评估指标
 options = trainingOptions('adam', ...
-    'MaxEpochs',300, ...
+    'MaxEpochs',400, ...
     'GradientThreshold',1, ...
     'MiniBatchSize',miniBatchSize, ...
     'InitialLearnRate',0.01, ...
     'LearnRateSchedule','piecewise', ...
-    'LearnRateDropFactor',0.5, ...
-    'LearnRateDropPeriod',50, ...
+    'LearnRateDropFactor',0.6, ...
+    'LearnRateDropPeriod',30, ...
     'Verbose',1,...
     'Shuffle','every-epoch');
 % , ...
@@ -158,7 +158,7 @@ for i = 1:num_subdirs
    if i > 2
        % 目前的输入是12xn
         zTrain_cell{i-2} = xTrain;
-        tTrain_cell{i-2} = tTrain(1,:);
+        tTrain_cell{i-2} = tTrain(torque_idx,:);
 %         tTrain_mat(i-2,1) = tTrain;
    end
     

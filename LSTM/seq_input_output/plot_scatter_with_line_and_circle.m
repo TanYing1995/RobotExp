@@ -8,6 +8,7 @@ function plot_scatter_with_line_and_circle(n, x_val,bt)
     x = 1:length(x_val);
     y = x_val;
     
+    figure
     % 创建散点图
     scatter(x, y, 'filled');
     hold on;

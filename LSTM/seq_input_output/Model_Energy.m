@@ -1,9 +1,11 @@
+% 选取测试集中的数据，进行指标测试
 
 % 数据所在的父目录
 % data_dir = 'I:\Experiments\LSTM\力矩数据';
 data_dir = 'I:\Experiments\LSTM\Data';
 
-num = 6;
+torque_idx = 6;
+
 
 % 获取所有子目录信息
 all_subdirs = dir(data_dir);
@@ -113,39 +115,78 @@ for i = 1:num_subdirs
     zTrain = zeros(2,ncols);
     zTrain(1,:) = xTrain(1,:);
     zTrain(2,:) = xTrain(7,:);
-    
-%     zTrain = zTrain'; % nx2
-%     yTrain = tTrain(1,:)'; % nx1
      
    if i > 2
         zTrain_cell{i-2} = xTrain;
 %         zTrain_cell{i-2} = zTrain;
-        tTrain_cell{i-2} = tTrain(num,:);
+        tTrain_cell{i-2} = tTrain;%这里将6xn的矩阵直接放入
 %         tTrain_mat(i-2,1) = tTrain;
    end
     
 end
 
+%计算总能耗
 
-idx = randi(n,1,1);
-tPred = predict(net,zTrain_cell{idx}); % 输出为矩阵
+k = 10;
+actual_energy = [];
+expect_energy = [];
+for i = 1 : k
 
-minval = output_min(num,1);
-maxval = output_max(num,1);
+    idx = randi(n,1,1);
+    input = zTrain_cell{idx};%12xn
+    output = tTrain_cell{idx};%6xn
+    
+    tPred = zeros(6,size(output,2));
+    tAct = zeros(6,size(output,2));
 
-tPred = 0.5*(tPred+1)*(maxval-minval)+minval;
-tAct = tTrain_cell{idx};
-tAct = 0.5*(tAct+1)*(maxval-minval)+minval;
+    curLen = size(input,2);
+    for j = 1:6
+         
+        % 获取当前网络的名称
+        network_name = ['t', num2str(j)];
 
-% 对预测结果平滑处理
-% tPred = kalmanFileter(tPred);
+        tPred(j,:) = predict(eval(network_name),input); % 输出为矩阵
+        
+        minval = output_min(j,1);
+        maxval = output_max(j,1);
+        
+        tPred(j,:) = 0.5*(tPred(j,:)+1)*(maxval-minval)+minval;
 
-for i = 1 : 1
-   figure(i); 
-   plot(tAct,'b');
-   xlabel('时间');
-   ylabel('力矩');
-   hold on;
-   plot(tPred,'r');
-   legend('实际力矩', '预测力矩');
+        tAct(j,:) = output(j,:);
+        tAct(j,:) = 0.5*(tAct(j,:)+1)*(maxval-minval)+minval;
+           
+    end
+
+    for j = 1 : 6
+        tPred(j,:) = kalmanFileter(tPred(j,:));
+    end
+
+    for j = 1 : 12
+        minval = input_min(j,1);
+        maxval = input_max(j,1);
+
+        input(j,:) = 0.5*(input(j,:)+1)*(maxval-minval)+minval;
+    end
+
+    %计算实际能耗 和计算能耗
+    % 忽略掉前100个时间点，防止因头部误差带来更大误差
+    x = 0;y = 0; 
+
+    for l = 1 : 6
+        tx = sum(abs(dot(input(l+6,101:curLen),tAct(l,101:curLen))));
+        x = x + tx;
+        ty = sum(abs(dot(input(l+6,101:curLen),tPred(l,101:curLen))));
+        y = y + ty;
+    end
+    
+    actual_energy(end+1) = x;
+    expect_energy(end+1) = y;
 end
+actual_energy = actual_energy*0.001;
+expect_energy = expect_energy*0.001;
+figure;
+bar([actual_energy', expect_energy']);
+legend('实际能耗', '预测能耗');
+xlabel('样本组别');
+ylabel('能耗');
+title('离线能耗预测对比'); 
