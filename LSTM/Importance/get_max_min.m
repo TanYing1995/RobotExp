@@ -24,8 +24,8 @@ data_dir = 'I:\Experiments\LSTM\Data';
 all_subdirs = dir(data_dir);
 num_subdirs = length(all_subdirs);
 
-input_max = -10000000*ones(12,1); %12x1最大值向量
-input_min = 10000000*ones(12,1); %12x1最小值向量
+input_max = -10000000*ones(18,1); %12x1最大值向量
+input_min = 10000000*ones(18,1); %12x1最小值向量
 
 output_max = -10000000*ones(6,1); %6x1最大值向量
 output_min = 10000000*ones(6,1); %6x1最小值向量

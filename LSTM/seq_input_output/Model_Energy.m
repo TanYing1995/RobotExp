@@ -125,9 +125,15 @@ for i = 1:num_subdirs
     
 end
 
-%计算总能耗
+% 计算总能耗
 
 k = 10;
+% 画图部分参数
+plot_x = [];
+plot_y = [];
+plot_idx = randi([1,k]);
+
+
 actual_energy = [];
 expect_energy = [];
 for i = 1 : k
@@ -140,8 +146,9 @@ for i = 1 : k
     tAct = zeros(6,size(output,2));
 
     curLen = size(input,2);
+
     for j = 1:6
-         
+        % 循环处理各关节力矩 
         % 获取当前网络的名称
         network_name = ['t', num2str(j)];
 
@@ -181,6 +188,13 @@ for i = 1 : k
     
     actual_energy(end+1) = x;
     expect_energy(end+1) = y;
+
+    % 画图
+    if plot_idx == i
+        plot_x = tAct(:,101:curLen);
+        plot_y = tPred(:,101:curLen);
+    end
+
 end
 actual_energy = actual_energy*0.001;
 expect_energy = expect_energy*0.001;
@@ -190,3 +204,91 @@ legend('实际能耗', '预测能耗');
 xlabel('样本组别');
 ylabel('能耗');
 title('离线能耗预测对比'); 
+
+% 画误差图
+figure (4)
+% 计算能耗预测误差百分比
+error_percent = abs((actual_energy - expect_energy) ./ actual_energy) * 100;
+
+% 绘制条形图
+bar(error_percent);
+
+% 设置坐标轴标签
+xlabel('数据索引');
+ylabel('能耗预测误差百分比(%)');
+
+% 设置图表标题
+title('能耗预测误差百分比');
+
+% 显示误差百分比值
+text(1:numel(error_percent), error_percent, num2str(error_percent', '%0.1f%%'),...
+    'HorizontalAlignment','center', 'VerticalAlignment','bottom');
+
+% 设置y轴限制
+ylim([0, max(error_percent) * 3.1]);
+
+
+figure (2)
+
+% 第一个子图
+subplot(3,1,1);
+plot(plot_x(1, :));
+hold on;
+plot(plot_y(1, :));
+hold off;
+legend('实际力矩', '预测力矩');
+title('关节一');
+ylabel('力矩/Nm')
+
+% 第二个子图
+subplot(3,1,2);
+plot(plot_x(2, :));
+hold on;
+plot(plot_y(2, :));
+hold off;
+legend('实际力矩', '预测力矩');
+title('关节二');
+ylabel('力矩/Nm')
+% 第三个子图
+subplot(3,1,3);
+plot(plot_x(3, :));
+hold on;
+plot(plot_y(3, :));
+hold off;
+legend('实际力矩', '预测力矩');
+title('关节三');
+
+xlabel('时间/ms')
+ylabel('力矩/Nm')
+
+figure (3)
+
+% 第一个子图
+subplot(3,1,1);
+plot(plot_x(4, :));
+hold on;
+plot(plot_y(4, :));
+hold off;
+legend('实际力矩', '预测力矩');
+title('关节四');
+ylabel('力矩/Nm')
+% 第二个子图
+subplot(3,1,2);
+plot(plot_x(5, :));
+hold on;
+plot(plot_y(5, :));
+hold off;
+legend('实际力矩', '预测力矩');
+title('关节五');
+ylabel('力矩/Nm')
+% 第三个子图
+subplot(3,1,3);
+plot(plot_x(6, :));
+hold on;
+plot(plot_y(6, :));
+hold off;
+legend('实际力矩', '预测力矩');
+title('关节六');
+
+xlabel('时间/ms')
+ylabel('力矩/Nm')

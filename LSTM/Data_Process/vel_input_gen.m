@@ -3,7 +3,7 @@
 % 数据所在的父目录
 % data_dir = 'I:\Experiments\LSTM\力矩数据-new';
 % data_dir = 'C:\Users\admin\Desktop\轨迹\test';
-data_dir = 'I:\Experiments\LSTM\数据集_3';
+data_dir = 'I:\Experiments\LSTM\问题数据';
 % 获取所有子目录信息
 all_subdirs = dir(data_dir);
 num_subdirs = length(all_subdirs);
@@ -34,12 +34,21 @@ for i = 1:num_subdirs
     velocity = diff(angle_data,1,2) ./ time_interval; % 对数据进行沿行差分计算速度
     velocity = [zeros(6,1) velocity];
     
+%     acceleration = diff(velocity,1,2) ./ time_interval;
+%     acceleration = [zeros(6,1) acceleration];
+%     
     %速度矩阵平滑处理，防止数据的突变
 
     vel = kalman_filter(velocity);
+
+    acc = diff(vel,1,2) ./ time_interval;
+    acc = [zeros(6,1) acc];
+
+    acc = kalman_filter(acc);
     
-    input = [angle_data ; vel];% 输入矩阵
+    input = [angle_data ; vel ; acc];% 输入矩阵
 
     save(fullfile([data_dir '\' subdir_name],'velocity.mat'),'vel'); 
+    save(fullfile([data_dir '\' subdir_name],'acceleration.mat'),'acc'); 
     save(fullfile([data_dir '\' subdir_name],'input.mat'),'input'); 
 end

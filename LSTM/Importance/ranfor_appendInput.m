@@ -59,7 +59,7 @@ end
 
 %% Train
 
-% 定义10折交叉验证分区对象
+% 定义5折交叉验证分区对象
 cv = cvpartition(n, 'KFold', 5);
 
 
